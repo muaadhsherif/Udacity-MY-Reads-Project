@@ -2,7 +2,11 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
 export default class BooksList extends Component {
-	shelfs = ['currentlyReading', 'wantToRead', 'read']
+	shelfs = [
+		{ title: 'Currently Reading', value: 'currentlyReading' },
+		{ title: 'Want To Read', value: 'wantToRead' },
+		{ title: 'Read', value: 'read' },
+	]
 
 	filterShelf = (shelf) =>
 		this.props.books.filter((value) => value.shelf === shelf)
@@ -16,12 +20,12 @@ export default class BooksList extends Component {
 					</div>
 					<div className='list-books-content'>
 						{this.shelfs.map((shelf) => (
-							<div className='bookshelf'>
-								<h2 className='bookshelf-title'>Currently Reading</h2>
+							<div className='bookshelf' key={shelf.value}>
+								<h2 className='bookshelf-title'>{shelf.title}</h2>
 								<div className='bookshelf-books'>
 									<ol className='books-grid'>
-										{this.filterShelf(shelf).map((book) => (
-											<li>
+										{this.filterShelf(shelf.value).map((book) => (
+											<li key={book.id}>
 												<div className='book'>
 													<div className='book-top'>
 														<div
