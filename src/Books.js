@@ -44,7 +44,10 @@ export default class Books extends Component {
 																Move to...
 															</option>
 															{this.shelfs.map((shelf) => (
-																<option value={shelf.value}>
+																<option
+																	key={shelf.value}
+																	value={shelf.value}
+																>
 																	{shelf.title}
 																</option>
 															))}
