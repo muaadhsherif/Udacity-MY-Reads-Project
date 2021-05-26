@@ -60,12 +60,17 @@ export default class Search extends Component {
 				}
 			})
 			index
-				? (this.state.searchedBooks.splice(index, 1, newBook),
-				  this.setState((currentState) => ({})))
+				? //this.state.books.splice(index, 1, newBook)
+				  this.setState((currentState) => ({
+						searchedBooks: currentState.searchedBooks
+							.filter((val, ind) => ind !== index)
+							.concat(newBook),
+				  }))
 				: this.setState((currentState) => ({
-						books: currentState.searchedBooks.concat(newBook),
+						searchedBooks: currentState.searchedBooks.concat(newBook),
 				  }))
 		})
+
 		this.props.changeShelf(bookID, newShilf)
 	}
 

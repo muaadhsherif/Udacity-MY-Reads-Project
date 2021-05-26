@@ -12,6 +12,7 @@ class BooksApp extends React.Component {
 
 	changeShelf = (bookID, newShilf) => {
 		let index
+		console.log(newShilf)
 		BooksAPI.update(bookID, newShilf)
 		BooksAPI.get(bookID).then((newBook) => {
 			newBook.shelf = newShilf
@@ -22,8 +23,12 @@ class BooksApp extends React.Component {
 				}
 			})
 			index
-				? (this.state.books.splice(index, 1, newBook),
-				  this.setState((currentState) => ({})))
+				? //this.state.books.splice(index, 1, newBook)
+				  this.setState((currentState) => ({
+						books: currentState.books
+							.filter((val, ind) => ind !== index)
+							.concat(newBook),
+				  }))
 				: this.setState((currentState) => ({
 						books: currentState.books.concat(newBook),
 				  }))
