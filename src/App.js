@@ -12,7 +12,6 @@ class BooksApp extends React.Component {
 
 	changeShelf = (bookID, newShilf) => {
 		let index
-		console.log(newShilf)
 		BooksAPI.update(bookID, newShilf)
 		BooksAPI.get(bookID).then((newBook) => {
 			newBook.shelf = newShilf

@@ -7,6 +7,11 @@ export default class Books extends Component {
 		{ title: 'Want To Read', value: 'wantToRead' },
 		{ title: 'Read', value: 'read' },
 	]
+	hasImage = (book) => {
+		if (book.hasOwnProperty('imageLinks')) {
+			return `url(${book.imageLinks.thumbnail})`
+		}
+	}
 
 	render() {
 		const { shelfs, filterShelfs, changeShelf } = this.props
@@ -27,7 +32,8 @@ export default class Books extends Component {
 														style={{
 															width: 128,
 															height: 193,
-															backgroundImage: `url(${book.imageLinks.thumbnail})`,
+															backgroundImage:
+																this.hasImage(book),
 														}}
 													></div>
 													<div className='book-shelf-changer'>

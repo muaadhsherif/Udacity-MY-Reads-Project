@@ -8,13 +8,51 @@ export default class Search extends Component {
 		searchedBooks: [],
 	}
 
+	shelfs = [
+		{ title: 'Currently Reading', value: 'currentlyReading' },
+		{ title: 'Want To Read', value: 'wantToRead' },
+		{ title: 'Read', value: 'read' },
+		{ title: 'Uncategorized', value: 'none' },
+	]
+
+	search = (query) => {
+		query.length
+			? BooksAPI.search(query, 20).then((searchedBooks) => {
+					if (Array.isArray(searchedBooks)) {
+						let books = searchedBooks.map((book) => {
+							this.props.books.forEach((b) => {
+								if (book.id === b.id) {
+									book.shelf = b.shelf
+								}
+							})
+							if (!book.hasOwnProperty('shelf')) {
+								book.shelf = 'none'
+							}
+
+							return book
+						})
+						this.setState((c) => ({
+							searchedBooks: books,
+						}))
+					} else {
+						this.setState((c) => ({
+							searchedBooks: [],
+						}))
+					}
+			  })
+			: this.setState((c) => ({
+					searchedBooks: [],
+			  }))
+	}
+
+	filterShelfs = (shelf) =>
+		this.state.searchedBooks.filter((b) => b.shelf === shelf)
+
 	changeShelf = (bookID, newShilf) => {
 		let index
-		console.log(newShilf)
 		BooksAPI.update(bookID, newShilf)
 		BooksAPI.get(bookID).then((newBook) => {
 			newBook.shelf = newShilf
-			console.log(newBook)
 
 			this.state.searchedBooks.forEach((b, i) => {
 				if (b.id === newBook.id) {
@@ -30,44 +68,6 @@ export default class Search extends Component {
 		})
 		this.props.changeShelf(bookID, newShilf)
 	}
-
-	shelfs = [
-		{ title: 'Currently Reading', value: 'currentlyReading' },
-		{ title: 'Want To Read', value: 'wantToRead' },
-		{ title: 'Read', value: 'read' },
-		{ title: 'None', value: 'none' },
-	]
-
-	search = (query) => {
-		query.length &&
-			BooksAPI.search(query, 20).then((searchedBooks) => {
-				if (searchedBooks.length) {
-					searchedBooks.map((book) => {
-						this.props.books.forEach((b) => {
-							if (book.id === b.id) {
-								book.shelf = b.shelf
-							}
-						})
-						if (!book.hasOwnProperty('shelf')) {
-							book.shelf = 'none'
-						}
-
-						return book
-					})
-					this.setState((c) => ({
-						searchedBooks: searchedBooks,
-					}))
-				}
-			})
-	}
-
-	/* filterShelfs = (shelf) => {
-		console.log(this.state.searchedBooks)
-		return this.state.searchedBooks.filter((book) => book.shelf === shelf)
-	} */
-
-	filterShelfs = (shelf) =>
-		this.state.searchedBooks.filter((b) => b.shelf === shelf)
 
 	render() {
 		return (
