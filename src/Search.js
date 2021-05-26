@@ -8,11 +8,34 @@ export default class Search extends Component {
 		searchedBooks: [],
 	}
 
+	changeShelf = (bookID, newShilf) => {
+		let index
+		console.log(newShilf)
+		BooksAPI.update(bookID, newShilf)
+		BooksAPI.get(bookID).then((newBook) => {
+			newBook.shelf = newShilf
+			console.log(newBook)
+
+			this.state.searchedBooks.forEach((b, i) => {
+				if (b.id === newBook.id) {
+					index = i
+				}
+			})
+			index
+				? (this.state.searchedBooks.splice(index, 1, newBook),
+				  this.setState((currentState) => ({})))
+				: this.setState((currentState) => ({
+						books: currentState.searchedBooks.concat(newBook),
+				  }))
+		})
+		this.props.changeShelf(bookID, newShilf)
+	}
+
 	shelfs = [
-		{ title: 'None', value: 'none' },
 		{ title: 'Currently Reading', value: 'currentlyReading' },
 		{ title: 'Want To Read', value: 'wantToRead' },
 		{ title: 'Read', value: 'read' },
+		{ title: 'None', value: 'none' },
 	]
 
 	search = (query) => {
@@ -68,7 +91,7 @@ export default class Search extends Component {
 					<Books
 						shelfs={this.shelfs}
 						filterShelfs={this.filterShelfs}
-						changeShelf={this.props.changeShelf}
+						changeShelf={this.changeShelf}
 					/>
 				</div>
 			</div>

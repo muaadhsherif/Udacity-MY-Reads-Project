@@ -2,22 +2,36 @@ import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 import { Route } from 'react-router'
-import AddBook from './AddBook'
+import Search from './Search'
 import BooksList from './BooksList'
 
 class BooksApp extends React.Component {
 	state = {
-		searchedValue: '',
 		books: [],
 	}
 
-	search(query) {
-		this.setState(() => {
-			return { searchedValue: query }
+	changeShelf = (bookID, newShilf) => {
+		let index
+		console.log(newShilf)
+		BooksAPI.update(bookID, newShilf)
+		BooksAPI.get(bookID).then((newBook) => {
+			newBook.shelf = newShilf
+
+			this.state.books.forEach((b, i) => {
+				if (b.id === newBook.id) {
+					index = i
+				}
+			})
+			index
+				? (this.state.books.splice(index, 1, newBook),
+				  this.setState((currentState) => ({})))
+				: this.setState((currentState) => ({
+						books: currentState.books.concat(newBook),
+				  }))
 		})
 	}
 
-	componentDidMount() {
+	componentDidMount = () => {
 		BooksAPI.getAll().then((books) => {
 			console.log(books)
 			this.setState(() => ({
@@ -31,12 +45,22 @@ class BooksApp extends React.Component {
 			<div className='app'>
 				<Route
 					path='/search'
-					render={() => <AddBook search={this.search} />}
+					render={() => (
+						<Search
+							changeShelf={this.changeShelf}
+							books={this.state.books}
+						/>
+					)}
 				/>
 				<Route
 					exact
 					path='/'
-					render={() => <BooksList books={this.state.books} />}
+					render={() => (
+						<BooksList
+							changeShelf={this.changeShelf}
+							books={this.state.books}
+						/>
+					)}
 				/>
 			</div>
 		)
